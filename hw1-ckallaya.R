@@ -42,6 +42,20 @@ ui <- fluidPage(
     # Inputs: Select variables to plot ------------------------------
     sidebarPanel(
       
+      # Select which county/counties to plot ------------------------
+      selectInput(inputId = "selected_county", 
+                  label = "Select county/counties:",
+                  choices = c("Adams", "Allegheny", "Armstrong", "Beaver", "Bedford", "Berks", "Blair", "Bradford", "Bucks", "Butler","Cambria", "Cameron", "Carbon","Centre","Chester", "Clarion", "Clearfield", "Clinton", "Columbia", "Crawford", "Cumberland", "Dauphin", "Delaware", "Elk", "Erie", "Fayette", "Forest", "Franklin", "Fulton", "Greene", "Huntingdon", "Indiana", "Jefferson","Juniata", "Lackawanna", "Lancaster", "Lawrence",  "Lebanon", "Lehigh", "Luzerne", "Lycoming", "McKean", "Mercer","Mifflin", "Monroe", "Montgomery", "Montour", "Northampton", "Northumberland", "Perry", "Philadelphia", "Pike", "Potter", "Schuylkill", "Snyder", "Somerset", "Sullivan", "Susquehanna", "Tioga", "Union",
+                              "Venango", "Warren", "Washington", "Wayne", "Westmoreland", "Wyoming", "York"),
+                  multiple = TRUE,
+                  selected = c("Adams", "Allegheny")),
+      
+      selectInput(inputId = "selected_year", 
+                  label = "Select year/years:",
+                  choices = c(2021,2020,2019,2018,2017,2016,2015,2014,2013,2012,2011,2010,2009,2008,2007,2006,2005,2004,2003,2002,2001,2000,1999,1998,1997,1996,1995,1994,1993,1992,1991,1990,1989,1987,1986,1985,1984,1983,1982,1981,1980,1979,1978,1977,1976),
+                  multiple = TRUE,
+                  selected = c(2021,2020)),
+      
       # Select variable for y-axis ----------------------------------
       selectInput(inputId = "y", 
                   label = "Y-axis:",
@@ -103,14 +117,6 @@ ui <- fluidPage(
       # Horizontal line for visual separation -----------------------
       hr(),
       
-      # Select which county/counties to plot ------------------------
-      selectInput(inputId = "selected_county", 
-                  label = "Select county/counties:",
-                  choices = c("Adams", "Allegheny", "Armstrong", "Beaver", "Bedford", "Berks", "Blair", "Bradford", "Bucks", "Butler","Cambria", "Cameron", "Carbon","Centre","Chester", "Clarion", "Clearfield", "Clinton", "Columbia", "Crawford", "Cumberland", "Dauphin", "Delaware", "Elk", "Erie", "Fayette", "Forest", "Franklin", "Fulton", "Greene", "Huntingdon", "Indiana", "Jefferson","Juniata", "Lackawanna", "Lancaster", "Lawrence",  "Lebanon", "Lehigh", "Luzerne", "Lycoming", "McKean", "Mercer","Mifflin", "Monroe", "Montgomery", "Montour", "Northampton", "Northumberland", "Perry", "Philadelphia", "Pike", "Potter", "Schuylkill", "Snyder", "Somerset", "Sullivan", "Susquehanna", "Tioga", "Union",
-                              "Venango", "Warren", "Washington", "Wayne", "Westmoreland", "Wyoming", "York"),
-                  multiple = TRUE,
-                  selected = c("Adams", "Allegheny")),
-      
      ),
 
     # Output: -------------------------------------------------------
@@ -158,7 +164,7 @@ server <- function(input, output, session) {
   # Create a subset of data filtering for selected counties ------
   rawdata_final <- reactive({ 
     req(input$selected_county) 
-    filter(rawdata, County %in% input$selected_county)
+    filter(rawdata, County %in% input$selected_county & year %in% input$selected_year)
   })
   
   # Convert plot_title toTitleCase ----------------------------------
@@ -175,7 +181,7 @@ server <- function(input, output, session) {
            y = toTitleCase(str_replace_all(input$y, "_", " ")),
            color = toTitleCase(str_replace_all(input$z, "_", " ")),
            title = pretty_plot_title2()
-      ) 
+      )
   })
     
     output$barplot <- renderPlot({
