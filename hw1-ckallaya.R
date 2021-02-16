@@ -5,9 +5,10 @@ library(stringr)
 library(dplyr)
 library(tools)
 library(htmltools)
+library(rsconnect)
 
 # load COVID-19 and unemployment data
-rawdata <- read.csv("D:/Spring_2021/RShiny/HW1/hw1-ckallaya/rawdata.csv")
+rawdata <- read.csv("./rawdata.csv")
 
 # rechange the county column name
 colnames(rawdata)[1] <- "County"
@@ -111,15 +112,15 @@ ui <- fluidPage(
       
       # Enter text for plot title ---------------------------------------------
       textInput(inputId = "plot_title1", 
-                label = "Title: Plot 1", 
+                label = "Title: Scatter plot", 
                 placeholder = "Enter text to be used as plot title"),
       
       textInput(inputId = "plot_title2", 
-                label = "Title: Plot 2", 
+                label = "Title: Bar plot", 
                 placeholder = "Enter text to be used as plot title"),
       
       textInput(inputId = "plot_title3", 
-                label = "Title: Plot 3", 
+                label = "Title: Box plot", 
                 placeholder = "Enter text to be used as plot title"),
       
       # Horizontal line for visual separation -----------------------
