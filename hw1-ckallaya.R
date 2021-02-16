@@ -80,9 +80,17 @@ ui <- fluidPage(
                   choices = c("County" = "County", 
                               "Region" = "dcedregion",
                               "Month" = "month",
-                              "Year" = "year"
-                              ),
+                              "Year" = "year"),
                   selected = "year"),
+      
+      # Select variable for label -----------------------------------
+      selectInput(inputId = "m", 
+                  label = "Label by:",
+                  choices = c("County" = "County", 
+                              "Region" = "dcedregion",
+                              "Month" = "month",
+                              "Year" = "year"),
+                  selected = "County"),
       
       # Set alpha level ---------------------------------------------
       sliderInput(inputId = "alpha", 
@@ -175,23 +183,23 @@ server <- function(input, output, session) {
   # Create plot objects, the plotOutput function is expecting --
 
     output$scatterplot <- renderPlot({
-    ggplot(data = rawdata_final(), aes_string(x = input$x, y = input$y, color = input$z)) +
+    ggplot(data = rawdata_final(), aes_string(x = input$x, y = input$y, color = input$z, label = input$m)) +
       geom_point(alpha = input$alpha, size = input$size) +
       labs(x = toTitleCase(str_replace_all(input$x, "_", " ")),
            y = toTitleCase(str_replace_all(input$y, "_", " ")),
            color = toTitleCase(str_replace_all(input$z, "_", " ")),
            title = pretty_plot_title2()
-      )
+      ) + geom_text(size = 3, hjust = 0, nudge_x = 0.1)
   })
     
     output$barplot <- renderPlot({
-      ggplot(data = rawdata_final(), aes_string(x = input$x, y = input$y, color = input$z)) +
-        geom_bar(stat = "identity") +
+      ggplot(data = rawdata_final(), aes_string(x = input$x, y = input$y, color = input$z, label = input$m)) +
+        geom_bar(stat = "identity",fill="white", width=0.5) +
         labs(x = toTitleCase(str_replace_all(input$x, "_", " ")),
              y = toTitleCase(str_replace_all(input$y, "_", " ")),
              color = toTitleCase(str_replace_all(input$z, "_", " ")),
              title = pretty_plot_title1()
-        ) 
+        ) + geom_text(size = 3, hjust = 0, nudge_x = 0.1)
     })
   
   output$boxplot <- renderPlot({
@@ -203,7 +211,6 @@ server <- function(input, output, session) {
            title = pretty_plot_title3()
       ) 
   })
-
   
   # Print number of data points plotted ----------------------------------
   output$n <- renderUI({
