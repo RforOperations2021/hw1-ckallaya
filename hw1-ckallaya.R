@@ -158,9 +158,9 @@ ui <- fluidPage(
     HTML(
       paste(
         h5("Data Sources:"),
-        a(href = "https//:paworkstats.geosolinc.com", "Local Area Unemployment Statistics (LAUS) - Latest data: December, 2020"),  # can put this in ui or renderui only
+        a(href = "https://paworkstats.geosolinc.com/vosnet/lmi/default.aspx", "Local Area Unemployment Statistics (LAUS) - Latest data: December, 2020"),  # can put this in ui or renderui only
         br(),
-        a(href = "https//:https://coronavirus.jhu.edu/map.html", "Johns Hopkins' Covid-19 New Cases - Latest data: January, 2021")  # can put this in ui or renderui only
+        a(href = "https://coronavirus.jhu.edu/", "Johns Hopkins' Covid-19 New Cases - Latest data: January, 2021")  # can put this in ui or renderui only
       )
     )
   )
@@ -226,17 +226,14 @@ server <- function(input, output, session) {
   output$rawdatatable <- DT::renderDataTable(
     if(input$show_data){
       DT::datatable(data = rawdata_final(),
-                    callback = JS("$('div.dwnld').append($('#download1'));"),
                     extensions = 'Buttons',
                     options = list(pageLength = 10, dom = 'B<"dwnld">frtip',
-                                   buttons = list(
-                                     "copy"
-                                   )), 
+                                   buttons = list("copy")), 
                     rownames = FALSE)
     }
   )
   
-  # Download data if button is clicked -------------------------------------
+  # Download data into a csv file if button is clicked -------------------------------------
   output$download1 <- downloadHandler(
     filename = function() {
       paste("data-", Sys.Date(), ".csv", sep="")
